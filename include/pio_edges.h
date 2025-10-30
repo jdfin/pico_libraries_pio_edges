@@ -24,8 +24,8 @@ class Edges {
 
         static uint32_t div();
 
-        static inline PIO pio() { return _pio; }
-        static inline uint sm() { return _sm; }
+        static PIO pio() { return _pio; }
+        static uint sm() { return _sm; }
 
     private:
 
