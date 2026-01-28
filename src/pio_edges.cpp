@@ -1,10 +1,10 @@
+#include <cassert>
 #include <cstdint>
 #include <climits>
 #include "hardware/irq.h"
 #include "hardware/clocks.h"
 #include "hardware/pio.h"
 #include "pico/util/queue.h"
-#include "xassert.h"
 #include "edges.pio.h"
 #include "pio_edges.h"
 
@@ -29,7 +29,7 @@ void Edges::init(int gpio)
         pio_claim_free_sm_and_add_program_for_gpio_range(&edges_program, &_pio,
                                                          &_sm, &offset, gpio,
                                                          1, true);
-    xassert(status);
+    assert(status);
 
     pio_irq_init();
 
@@ -72,7 +72,7 @@ bool Edges::get_tick(int& rise, uint32_t& tick)
         _sync = 1;
         return true;
     }
-    xassert(false);
+    assert(false);
     __builtin_unreachable(); 
 }
 
@@ -99,14 +99,14 @@ uint32_t Edges::get_tick_hz()
 // Exact result is not necessarily an integer.
 uint64_t Edges::tick_to_nsec(uint64_t tick)
 {
-    xassert(_tick_hz != 0); // init() sets _tick_hz
+    assert(_tick_hz != 0); // init() sets _tick_hz
     return (tick * 1000000000ULL + _tick_hz / 2) / _tick_hz;
 }
 
 
 uint64_t Edges::tick_to_usec(uint64_t tick)
 {
-    xassert(_tick_hz != 0); // init() sets _tick_hz
+    assert(_tick_hz != 0); // init() sets _tick_hz
     return (tick * 1000000ULL + _tick_hz / 2) / _tick_hz;
 }
 
@@ -129,8 +129,8 @@ void Edges::pio_irq_handler()
 
 void Edges::pio_irq_init()
 {
-    xassert(_pio != NULL);
-    xassert(_sm < NUM_PIO_STATE_MACHINES);
+    assert(_pio != NULL);
+    assert(_sm < NUM_PIO_STATE_MACHINES);
 
     // find free irq for PIOx_IRQ_0
     int pio_irq = pio_get_irq_num(_pio, 0);
@@ -142,7 +142,7 @@ void Edges::pio_irq_init()
 
         // fail if PIOx_IRQ_1 is also in use exclusively
         bool status = (irq_get_exclusive_handler(pio_irq) != NULL);
-        xassert(status);
+        assert(status);
     }
 
     queue_init(&_queue, sizeof(uint32_t), queue_len);
